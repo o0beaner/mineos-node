@@ -39,7 +39,7 @@ RUN cd /usr/games/minecraft \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #configure and run supervisor
-RUN cp /usr/games/minecraft/init/supervisor_conf /etc/supervisor/conf.d/mines.conf
+RUN cp /usr/games/minecraft/init/supervisor_conf /etc/supervisor/conf.d/mineos.conf
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
 
 #entrypoint allowing for setting of mc password
