@@ -40,4 +40,6 @@ if [ ! -f /etc/ssl/certs/mineos.crt ]; then
   sh /usr/games/minecraft/generate-sslcert.sh
 fi
 
+/usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+
 exec "$@"
