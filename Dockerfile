@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
   supervisor \
   rdiff-backup \
   screen \
+  procps \
   rsync \
   git \
   curl \
@@ -22,7 +23,8 @@ RUN curl https://deb.nodesource.com/node_8.x/pool/main/n/nodejs/nodejs_8.9.4-1no
 #download mineos from github
 RUN mkdir /usr/games/minecraft \
   && cd /usr/games/minecraft \
-  && git clone --depth=1 https://github.com/hexparrot/mineos-node.git . \
+  && git clone --depth=1 https://github.com/o0beaner/mineos-node.git . \
+  && sed -i 's/true/false/g' mineos.conf \
   && cp mineos.conf /etc/mineos.conf \
   && chmod +x webui.js mineos_console.js service.js
 
@@ -37,7 +39,7 @@ RUN cd /usr/games/minecraft \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #configure and run supervisor
-RUN cp /usr/games/minecraft/init/supervisor_conf /etc/supervisor/conf.d/mineos.conf
+RUN cp /usr/games/minecraft/init/supervisor_conf /etc/supervisor/conf.d/mines.conf
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
 
 #entrypoint allowing for setting of mc password
