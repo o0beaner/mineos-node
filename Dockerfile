@@ -1,5 +1,5 @@
 FROM debian:stretch
-MAINTAINER William Dizon <wdchromium@gmail.com>
+MAINTAINER Tyler Bean <tyler.j.bean@gmail.com
 
 #update and accept all prompts
 RUN apt-get update && apt-get install -y \
