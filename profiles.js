@@ -98,7 +98,7 @@ exports.profile_manifests = {
   ftb: {
     name: 'Feed the Beast Server Packs',
     request_args: {
-      url: 'http://ftb.cursecdn.com/FTB2/static/modpacks.xml',
+      url: 'http://dist.creeper.host/FTB2/static/modpacks.xml',
       json: false
     },
     handler: function(profile_dir, body, callback) {
@@ -122,7 +122,7 @@ exports.profile_manifests = {
             item['webui_desc'] = '{0} (mc: {1})'.format(ref_obj['name'], ref_obj['mcVersion']);
             item['weight'] = 3;
             item['filename'] = ref_obj['serverPack'];
-            item['url'] = 'http://ftb.cursecdn.com/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, ref_obj.version.replace(/\./g, '_'), ref_obj.serverPack);
+            item['url'] = 'http://dist.creeper.host/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, ref_obj.version.replace(/\./g, '_'), ref_obj.serverPack);
             item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
             item['version'] = ref_obj['mcVersion'];
             item['release_version'] = ref_obj['version'];
@@ -140,7 +140,7 @@ exports.profile_manifests = {
               new_item['webui_desc'] = ref_obj['name'];
               new_item['weight'] = 3;
               new_item['filename'] = ref_obj['serverPack'];
-              new_item['url'] = 'http://ftb.cursecdn.com/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, old_versions[idx].replace(/\./g, '_'), ref_obj.serverPack);
+              new_item['url'] = 'http://dist.creeper.host/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, old_versions[idx].replace(/\./g, '_'), ref_obj.serverPack);
               new_item['downloaded'] = fs.existsSync(path.join(profile_dir, new_item.id, new_item.filename));
               new_item['version'] = ref_obj['mcVersion'];
               new_item['release_version'] = old_versions[idx];
@@ -161,7 +161,7 @@ exports.profile_manifests = {
   ftb_third_party: {
     name: 'Feed the Beast Third-Party Server Packs',
     request_args: {
-      url: 'http://ftb.cursecdn.com/FTB2/static/thirdparty.xml',
+      url: 'http://dist.creeper.host/FTB2/static/thirdparty.xml',
       json: false
     },
     handler: function(profile_dir, body, callback) {
@@ -185,7 +185,7 @@ exports.profile_manifests = {
             item['webui_desc'] = '{0} (mc: {1})'.format(ref_obj['name'], ref_obj['mcVersion']);
             item['weight'] = 3;
             item['filename'] = ref_obj['serverPack'];
-            item['url'] = 'http://ftb.cursecdn.com/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, ref_obj.version.replace(/\./g, '_'), ref_obj.serverPack);
+            item['url'] = 'http://dist.creeper.host/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, ref_obj.version.replace(/\./g, '_'), ref_obj.serverPack);
             item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
             item['version'] = ref_obj['mcVersion'];
             item['release_version'] = ref_obj['version'];
@@ -203,7 +203,7 @@ exports.profile_manifests = {
               new_item['webui_desc'] = ref_obj['name'];
               new_item['weight'] = 3;
               new_item['filename'] = ref_obj['serverPack'];
-              new_item['url'] = 'http://ftb.cursecdn.com/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, ref_obj.version.replace(/\./g, '_'), ref_obj.serverPack);
+              new_item['url'] = 'http://dist.creeper.host/FTB2/modpacks/{0}/{1}/{2}'.format(ref_obj.dir, ref_obj.version.replace(/\./g, '_'), ref_obj.serverPack);
               new_item['downloaded'] = fs.existsSync(path.join(profile_dir, new_item.id, new_item.filename));
               new_item['version'] = ref_obj['mcVersion'];
               new_item['release_version'] = old_versions[idx];
@@ -266,86 +266,33 @@ exports.profile_manifests = {
     } //end handler
   },
   paperspigot: {
-    name: 'PaperSpigot',
-    handler: function(profile_dir, callback) {
+    name: 'Paper',
+    request_args: {
+      url: 'https://papermc.io/api/v1/paper',
+      json: true
+    },
+    handler: function (profile_dir, body, callback) {
       var p = [];
 
       try {
-        var item = {};
+        for (var index in body.versions) {
+          var version = body.versions[index];
+          var item = new profile_template();
 
-        item['id'] = 'paperspigot-latest';
-        item['time'] = new Date().getTime();
-        item['releaseTime'] = new Date().getTime();
-        item['type'] = 'release';
-        item['group'] = 'paperspigot';
-        item['webui_desc'] = 'Latest paperclip release';
-        item['weight'] = 0;
-        item['filename'] = 'paperclip.jar';
-        item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
-        item['version'] = 0;
-        item['release_version'] = '';
-        item['url'] = 'https://ci.destroystokyo.com/job/PaperSpigot/lastSuccessfulBuild/artifact/paperclip.jar';
-        p.push(JSON.parse(JSON.stringify(item)));
+          item['id'] = 'Paper-{0}-latest'.format(version);
+          item['group'] = 'papermc';
+          item['webui_desc'] = 'Latest Paper build for {0}'.format(version);
+          item['weight'] = 0;
+          item['filename'] = 'paperclip.jar'.format(version);
+          item['url'] = 'https://papermc.io/api/v1/paper/{0}/latest/download'.format(version);
+          item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
+          item['version'] = version;
+          item['release_version'] = version;
+          item['type'] = 'release'
 
-        item['version'] = '1072';
-        item['id'] = 'paperspigot-{0}'.format(item.version);
-        item['time'] = new Date().getTime();
-        item['releaseTime'] = new Date().getTime();
-        item['type'] = 'release';
-        item['group'] = 'paperspigot';
-        item['release_version'] = '1.11.2';
-        item['webui_desc'] = 'Paperclip build {0} (mc version: {1})'.format(item.version, item['release_version']);
-        item['weight'] = 0;
-        item['filename'] = 'paperclip.jar';
-        item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
-        item['url'] = 'https://ci.destroystokyo.com/job/PaperSpigot/{0}/artifact/paperclip.jar'.format(item.version);
-        p.push(JSON.parse(JSON.stringify(item)));
-
-        item['version'] = '916';
-        item['id'] = 'paperspigot-{0}'.format(item.version);
-        item['time'] = new Date().getTime();
-        item['releaseTime'] = new Date().getTime();
-        item['type'] = 'release';
-        item['group'] = 'paperspigot';
-        item['release_version'] = '1.10.2';
-        item['webui_desc'] = 'Paperclip build {0} (mc version: {1})'.format(item.version, item['release_version']);
-        item['weight'] = 0;
-        item['filename'] = 'paperclip.jar';
-        item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
-        item['url'] = 'https://ci.destroystokyo.com/job/PaperSpigot/{0}/artifact/paperclip.jar'.format(item.version);
-        p.push(JSON.parse(JSON.stringify(item)));
-
-        item['version'] = '773';
-        item['id'] = 'paperspigot-{0}'.format(item.version);
-        item['time'] = new Date().getTime();
-        item['releaseTime'] = new Date().getTime();
-        item['type'] = 'release';
-        item['group'] = 'paperspigot';
-        item['release_version'] = '1.9.4';
-        item['webui_desc'] = 'Paperclip build {0} (mc version: {1})'.format(item.version, item['release_version']);
-        item['weight'] = 0;
-        item['filename'] = 'paperclip.jar';
-        item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
-        item['url'] = 'https://ci.destroystokyo.com/job/PaperSpigot/{0}/artifact/paperclip.jar'.format(item.version);
-        p.push(JSON.parse(JSON.stringify(item)));
-
-        item['version'] = '443';
-        item['id'] = 'paperspigot-{0}'.format(item.version);
-        item['time'] = new Date().getTime();
-        item['releaseTime'] = new Date().getTime();
-        item['type'] = 'release';
-        item['group'] = 'paperspigot';
-        item['release_version'] = '1.8.8';
-        item['webui_desc'] = 'Paperclip build {0} (mc version: {1})'.format(item.version, item['release_version']);
-        item['weight'] = 0;
-        item['filename'] = 'paperclip.jar';
-        item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
-        item['url'] = 'https://ci.destroystokyo.com/job/PaperSpigot/{0}/artifact/Paperclip.jar'.format(item.version);
-        //uppercase Paperclip.jar for some reason (old convention, perhaps)
-        p.push(JSON.parse(JSON.stringify(item)));
-
-      } catch (e) {}
-
+          p.push(item);
+        }
+      } catch (e) { console.log(e) }
       callback(null, p);
     } //end handler
   },
@@ -669,7 +616,7 @@ exports.profile_manifests = {
         item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
         item['version'] = 0;
         item['release_version'] = '';
-        item['url'] = 'http://ci.mengcraft.com:8080/job/nukkit/lastStableBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar';
+        item['url'] = 'http://ci.mengcraft.com:8081/job/nukkit/lastStableBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar';
 
         p.push(item);
 
@@ -686,7 +633,7 @@ exports.profile_manifests = {
         item['downloaded'] = fs.existsSync(path.join(profile_dir, item.id, item.filename));
         item['version'] = 0;
         item['release_version'] = '';
-        item['url'] = 'http://ci.mengcraft.com:8080/job/nukkit/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar';
+        item['url'] = 'http://ci.mengcraft.com:8081/job/nukkit/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar';
 
         p.push(item);
       } catch (e) {}

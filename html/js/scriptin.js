@@ -99,7 +99,7 @@ app.filter('kb_string_to_mb', function() {
 
 app.filter('seconds_to_time', function() {
   return function(seconds) {
-    return moment.duration(seconds, "seconds").format();
+    return moment.duration(seconds, "seconds").format('DD [days] HH [hours] mm [minutes]');
   }
 })
 
@@ -463,6 +463,13 @@ app.controller("Webui", ['$scope', 'socket', 'Servers', '$filter', '$translate',
 
   socket.on('/', 'change_locale', function(locale) {
     $translate.use(locale);
+  })
+
+  socket.on('/', 'optional_columns', function(user_data) {
+    var columns = [];
+    if (user_data.length > 0)
+      columns = user_data.split(',');
+    $scope.columns = columns;
   })
 
   socket.on('/', 'file_progress', function(data) {
